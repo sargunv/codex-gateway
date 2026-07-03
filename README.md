@@ -17,13 +17,18 @@ this is fine to use.
 - The [`codex` CLI](https://github.com/openai/codex) installed and logged in
   (`codex login`) so `~/.codex/auth.json` exists.
 
-## Run with Docker
+## Run with Docker / Podman
 
 ```sh
-docker run --rm -p 127.0.0.1:8080:8080 \
-  -v "$HOME/.codex/auth.json:/home/nonroot/.codex/auth.json" \
-  ghcr.io/sargunv/codex-gateway:latest serve
+docker run -d --name codex-gateway --restart unless-stopped \
+  -p 127.0.0.1:8080:8080 \
+  -v "$HOME/.codex/auth.json:/auth.json" \
+  ghcr.io/sargunv/codex-gateway:main
 ```
+
+The image runs as root and defaults to `/auth.json`, so rootless engines map the
+process to your uid (the owner of the `0600` auth file) with no extra flags.
+`podman` works the same; replace `docker` with `podman`.
 
 To expose on all interfaces, pass `--addr 0.0.0.0:8080` and map the port without
 the `127.0.0.1:` prefix.
