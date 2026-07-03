@@ -29,6 +29,11 @@ const (
 	clientID    = "app_EMoamEEZ73f0CkXaXp7hrann"
 	refreshSkew = 30 * time.Second
 	defaultAddr = "127.0.0.1:8080"
+	// clientVersion is reported to the upstream as the Codex CLI version. The
+	// backend gates /models (and some features) by client_version against each
+	// model's minimal_client_version, so we claim a high one to see everything.
+	// /responses is version-agnostic in practice. Bump if a model needs more.
+	clientVersion = "0.999.0"
 )
 
 var (
@@ -114,7 +119,7 @@ func newReverseProxy(target *url.URL, auth *codexAuth) *httputil.ReverseProxy {
 			r.Host = target.Host
 			q := r.URL.Query()
 			if q.Get("client_version") == "" {
-				q.Set("client_version", version)
+				q.Set("client_version", clientVersion)
 				r.URL.RawQuery = q.Encode()
 			}
 			r.Header.Set("Authorization", "Bearer "+accessToken)
