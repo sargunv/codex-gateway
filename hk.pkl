@@ -1,0 +1,33 @@
+amends "package://github.com/jdx/hk/releases/download/v1.48.0/hk@1.48.0#/Config.pkl"
+import "package://github.com/jdx/hk/releases/download/v1.48.0/hk@1.48.0#/Builtins.pkl"
+
+local lintSteps = new Mapping<String, Step> {
+  ["gomod-tidy"] = (Builtins.gomod_tidy) {
+    glob = List("**/go.mod")
+    workspace_indicator = "go.mod"
+    check_diff = "cd {{workspace}} && go mod tidy -diff"
+    fix = "cd {{workspace}} && go mod tidy"
+  }
+  ["golangci-lint"] {
+    glob = List("**/*.go")
+    workspace_indicator = "go.mod"
+    check = "cd {{workspace}} && golangci-lint run --allow-parallel-runners ./..."
+    fix = "cd {{workspace}} && golangci-lint run --allow-parallel-runners --fix ./..."
+  }
+  ["dprint"] = (Builtins.dprint)
+}
+
+hooks {
+  ["pre-commit"] {
+    fix = true
+    stash = "git"
+    steps { ...lintSteps }
+  }
+  ["check"] {
+    steps { ...lintSteps }
+  }
+  ["fix"] {
+    fix = true
+    steps { ...lintSteps }
+  }
+}

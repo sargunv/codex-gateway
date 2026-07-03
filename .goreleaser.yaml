@@ -1,0 +1,60 @@
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+
+version: 2
+
+project_name: codex-gateway
+
+snapshot:
+  version_template: 0.0.0-snapshot.{{ .ShortCommit }}
+
+builds:
+  - id: codex-gateway
+    main: .
+    binary: codex-gateway
+    env: [CGO_ENABLED=0]
+    goos: [darwin, linux, windows]
+    goarch: [amd64, arm64]
+    ldflags:
+      - >-
+        -s -w
+        -X main.version={{ .Version }}
+        -X main.commit={{ .Commit }}
+
+archives:
+  - id: codex-gateway
+    ids: [codex-gateway]
+    formats: [tar.gz]
+    name_template: >-
+      codex-gateway_
+      {{- .Version }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+    format_overrides:
+      - goos: windows
+        formats: [zip]
+
+dockers_v2:
+  - ids: [codex-gateway]
+    images: [
+      '{{ with index .Env "IMAGE" }}{{ . }}{{ else }}codex-gateway{{ end }}',
+    ]
+    tags: ["{{ .Version }}", latest]
+    dockerfile: Dockerfile
+    labels:
+      org.opencontainers.image.source: "{{ .GitURL }}"
+      org.opencontainers.image.revision: "{{ .FullCommit }}"
+      org.opencontainers.image.version: "{{ .Version }}"
+
+checksum:
+  name_template: checksums.txt
+
+changelog:
+  use: github
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^chore:"
