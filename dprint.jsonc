@@ -9,7 +9,7 @@
   "exec": { "commands": [] },
   "gofumpt": {
     "langVersion": "go1.26",
-    "modulePath": "github.com/sargunv/codex-gateway"
+    "modulePath": "github.com/sargunv/agent-api-gateway"
   },
   "plugins": [
     "https://plugins.dprint.dev/json-0.22.0.wasm",

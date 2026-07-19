@@ -2,30 +2,30 @@
 
 version: 2
 
-project_name: codex-gateway
+project_name: agent-api-gateway
 
 snapshot:
   version_template: 0.0.0-snapshot.{{ .ShortCommit }}
 
 builds:
-  - id: codex-gateway
-    main: .
-    binary: codex-gateway
+  - id: agent-api-gateway
+    main: ./cmd/agent-api-gateway
+    binary: agent-api-gateway
     env: [CGO_ENABLED=0]
     goos: [darwin, linux, windows]
     goarch: [amd64, arm64]
     ldflags:
       - >-
         -s -w
-        -X main.version={{ .Version }}
-        -X main.commit={{ .Commit }}
+        -X github.com/sargunv/agent-api-gateway/internal/cli.Version={{ .Version }}
+        -X github.com/sargunv/agent-api-gateway/internal/cli.Commit={{ .Commit }}
 
 archives:
-  - id: codex-gateway
-    ids: [codex-gateway]
+  - id: agent-api-gateway
+    ids: [agent-api-gateway]
     formats: [tar.gz]
     name_template: >-
-      codex-gateway_
+      agent-api-gateway_
       {{- .Version }}_
       {{- title .Os }}_
       {{- if eq .Arch "amd64" }}x86_64
@@ -36,9 +36,9 @@ archives:
         formats: [zip]
 
 dockers_v2:
-  - ids: [codex-gateway]
+  - ids: [agent-api-gateway]
     images: [
-      '{{ with index .Env "IMAGE" }}{{ . }}{{ else }}codex-gateway{{ end }}',
+      '{{ with index .Env "IMAGE" }}{{ . }}{{ else }}agent-api-gateway{{ end }}',
     ]
     tags: ["{{ .Version }}", latest]
     dockerfile: Dockerfile

@@ -1,17 +1,13 @@
-# syntax=docker/dockerfile:1
-
-FROM gcr.io/distroless/static-debian12
+FROM gcr.io/distroless/static-debian12@sha256:597c2b4bc7f353100af9b8b06bb4f126c4a45f9d8175e25d4f01f965d5d94396
 
 ARG TARGETPLATFORM
 
-COPY ${TARGETPLATFORM}/codex-gateway /codex-gateway
+COPY ${TARGETPLATFORM}/agent-api-gateway /agent-api-gateway
 
-# Run as root so rootless engines map us to the host uid that owns auth.json
-# (0600), and so the file is reachable without --user/--userns overrides.
-# CODEX_HOME=/ makes the binary default to /auth.json.
-# Listen on 0.0.0.0 so port-forwarded traffic reaches us; the -p mapping
-# controls host-side exposure.
-ENV CODEX_HOME=/
+# The process constructs provider activation from explicit environment variables
+# and mounted native credential directories. Listen on 0.0.0.0 so port-forwarded
+# traffic reaches us; the -p mapping controls host-side exposure.
 EXPOSE 8080
-ENTRYPOINT ["/codex-gateway"]
+USER nonroot:nonroot
+ENTRYPOINT ["/agent-api-gateway"]
 CMD ["serve", "--addr", "0.0.0.0:8080"]

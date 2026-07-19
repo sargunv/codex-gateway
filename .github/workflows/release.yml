@@ -83,9 +83,9 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
           mkdir -p context/linux/amd64 context/linux/arm64
-          ldflags="-s -w -X main.version=main -X main.commit=$GITHUB_SHA"
-          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="$ldflags" -o context/linux/amd64/codex-gateway .
-          CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -ldflags="$ldflags" -o context/linux/arm64/codex-gateway .
+          ldflags="-s -w -X github.com/sargunv/agent-api-gateway/internal/cli.Version=main -X github.com/sargunv/agent-api-gateway/internal/cli.Commit=$GITHUB_SHA"
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="$ldflags" -o context/linux/amd64/agent-api-gateway .
+          CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -ldflags="$ldflags" -o context/linux/arm64/agent-api-gateway .
 
       - name: Publish main image
         if: github.ref == 'refs/heads/main'

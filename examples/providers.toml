@@ -1,0 +1,26 @@
+# Strict custom providers. Secret values are read only from environment.
+[[providers]]
+id = "example"
+api_key_env = "EXAMPLE_API_KEY"
+
+[[providers.endpoints]]
+id = "chat"
+family = "openai-chat"
+base_url = "https://example.test/v1"
+models_url = "https://example.test/v1/models"
+
+[[providers.endpoints]]
+id = "messages"
+family = "anthropic-messages"
+base_url = "https://example.test"
+
+[[providers.models]]
+id = "model-a"
+upstream_id = "model-a-20260701"
+routes = ["chat", "messages"]
+preferred_route = "chat"
+context_window = 128000
+max_output_tokens = 8192
+supports_tools = true
+supports_reasoning = false
+input_modalities = ["text", "image"]

@@ -1,4 +1,5 @@
-/codex-gateway
-/.codex-gateway
+/agent-api-gateway
+/.agent-api-gateway
 /dist
 /tmp
+tests/client-compat/artifacts/
